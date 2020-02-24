@@ -41,7 +41,12 @@ def dns_record_id
         login_token: LOGIN_TOKEN,
         record_type: 'A'
     }
-    JSON.parse(resp.body)['records'][0]['id']
+    records = JSON.parse(resp.body)['records']
+    if records && records[0]
+        records[0]['id']
+    else
+        0
+    end
 end
 
 private
@@ -54,5 +59,6 @@ def connection
     end
 end
 
-
-synchorize_myip
+if __FILE__ == $0
+    synchorize_myip
+end
