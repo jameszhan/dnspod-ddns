@@ -4,6 +4,11 @@
 
 ### 准备脚本
 
+```bash
+$ git clone git@github.com:jameszhan/dnspod-ddns.git
+$ cd dnspod-ddns/
+```
+
 #### `Ruby`实现
 
 > 本脚本执行依赖于Ruby
@@ -52,3 +57,57 @@ $ /opt/bin/dnspod_ddns '*' 'your.domain.com'
 
 ### 配置定时任务
 
+```bash
+$ crontab -e
+```
+
+进入编辑器，添加如下内容，每10分钟执行一次同步任务
+
+```conf
+*/10 * * * * /opt/bin/dnspod_ddns &> /dev/null
+```
+
+检查任务配置
+
+```bash
+crontab -l
+```
+
+## 任务脚本工作详解
+
+- [创建`DNSPod`密钥](https://console.dnspod.cn/account/token)
+- [`DNSPod`用户`API`文档](https://www.dnspod.cn/docs/index.html)
+
+### 使用SHELL模拟脚本工作流程
+
+```bash
+$ export DNSPOD_LOGIN_TOKEN=id,token
+
+# 查询目标DNS记录详情
+$ curl -X POST https://dnsapi.cn/Record.List \
+    -H "User-Agent: DNSPod-DDNS/1.0.0" \
+    -d "login_token=${DNSPOD_LOGIN_TOKEN}&format=json&domain=zizhizhan.com&record_type=A&sub_domain=@" \
+    | python3 -m json.tool
+
+# 获取目标DNS记录ID
+$ curl -X POST https://dnsapi.cn/Record.List \
+    -H "User-Agent: DNSPod-DDNS/1.0.0" \
+    -d "login_token=${DNSPOD_LOGIN_TOKEN}&format=json&domain=zizhizhan.com&record_type=A&sub_domain=@" \
+    | python3 -c "import sys,json; ret=json.load(sys.stdin); print(ret.get('records', [{}])[0].get('id', ''))"
+
+# 同步本地外网IP到DNSPod
+$ curl -X POST https://dnsapi.cn/Record.Modify \
+    -H "User-Agent: DNSPod-DDNS/1.0.0" \
+    -d "login_token=${DNSPOD_LOGIN_TOKEN}&format=json&record_id=548361017&value=8.8.8.8&domain=zizhizhan.com&sub_domain=@&record_type=A&record_line=默认"
+```
+
+### 查询本机外网`IP`
+
+```bash
+$ telnet ns1.dnspod.net 6666
+$ curl -i http://myip.ipip.net/
+$ curl -i http://www.httpbin.org/ip
+$ curl -i http://whatismyip.akamai.com
+$ curl -i http://ipecho.net/plain
+$ curl -i http://myip.dnsomatic.com
+```
