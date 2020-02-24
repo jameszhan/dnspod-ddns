@@ -26,7 +26,7 @@ def synchorize_myip():
     dns_record_id, dns_record_value = get_dns_record_id()
     if dns_record_id > 0:
         myip = get_myip()
-        if dns_record_value != myip:
+        if dns_record_value.encode('utf-8') != myip:
             r = requests.post('https://dnsapi.cn/Record.Modify', data = {
                 'format': 'json',
                 'record_id': dns_record_id,
@@ -46,7 +46,7 @@ def synchorize_myip():
 def get_myip():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect(("ns1.dnspod.net", 6666))
-        return str(s.recv(16))
+        return s.recv(16)
 
 def get_dns_record_id():
     r = requests.post('https://dnsapi.cn/Record.List', data = {
