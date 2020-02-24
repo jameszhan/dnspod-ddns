@@ -67,10 +67,14 @@ $ crontab -e
 */10 * * * * /opt/bin/dnspod_ddns &> /dev/null
 ```
 
-检查任务配置
+检查cron进程状态和任务配置
 
 ```bash
-crontab -l
+$ sudo service cron status
+# 或
+$ sudo systemctl status cron
+
+$ crontab -l
 ```
 
 ## 任务脚本工作详解
