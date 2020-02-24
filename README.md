@@ -48,11 +48,11 @@ $ /opt/bin/dnspod_ddns '*'
 
 ```bash
 $ export DNSPOD_LOGIN_TOKEN=id,token
-$ /opt/bin/dnspod_ddns '*' 'your.domain.com'
+$ /opt/bin/dnspod_ddns '*' 'yourdomain.com'
 ```
 
 ```bash
-/opt/bin/dnspod_ddns '*' 'your.domain.com' 'id,token'
+/opt/bin/dnspod_ddns '*' 'yourdomain.com' 'id,token'
 ```
 
 ### 配置定时任务
@@ -64,12 +64,47 @@ $ crontab -e
 进入编辑器，添加如下内容，每10分钟执行一次同步任务
 
 ```conf
-*/10 * * * * /opt/bin/dnspod_ddns &> /dev/null
+*/10 * * * * /opt/bin/dnspod_ddns '@' 'yourdomain.com' 'id,token' > /dev/null
+```
+
+如果要使用系统环境变量，可以把如下配置加入到`/etc/environment`
+
+```conf
+DNSPOD_LOGIN_TOKEN=id,token
+DNSPOD_DOMAIN=your.domain.com
+DNSPOD_SUB_DOMAIN=@
+```
+
+```conf
+*/10 * * * * /opt/bin/dnspod_ddns > /dev/null
+```
+
+也可以直接把依赖的环境变量，配置在`cron`配置文件当中
+
+```conf
+DNSPOD_LOGIN_TOKEN=id,token
+DNSPOD_DOMAIN=your.domain.com
+DNSPOD_SUB_DOMAIN=@
+*/10 * * * * /opt/bin/dnspod_ddns > /dev/null
+```
+
+启用cron日志
+
+```bash
+$ sudo vim /etc/rsyslog.d/50-default.conf
+```
+
+去掉`cron`前面的注释(#)。
+
+```bash
+$ sudo systemctl restart rsyslog
 ```
 
 检查cron进程状态和任务配置
 
 ```bash
+$ sudo systemctl restart cron
+
 $ sudo service cron status
 # 或
 $ sudo systemctl status cron
