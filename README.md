@@ -57,6 +57,8 @@ $ /opt/bin/dnspod_ddns '*' 'yourdomain.com'
 
 ### 配置定时任务
 
+#### 简单配置
+
 ```bash
 $ crontab -e
 ```
@@ -66,6 +68,8 @@ $ crontab -e
 ```conf
 */10 * * * * /opt/bin/dnspod_ddns '@' 'yourdomain.com' 'id,token' > /dev/null
 ```
+
+#### 使用环境变量
 
 如果要使用系统环境变量，可以把如下配置加入到`/etc/environment`
 
@@ -88,7 +92,16 @@ DNSPOD_SUB_DOMAIN=@
 */10 * * * * /opt/bin/dnspod_ddns > /dev/null
 ```
 
-启用cron日志
+#### 同时配置多个任务
+
+```conf
+DNSPOD_LOGIN_TOKEN=id,token
+DNSPOD_DOMAIN=your.domain.com
+*/10 * * * * /opt/bin/dnspod_ddns '@' > /dev/null
+*/10 * * * * /opt/bin/dnspod_ddns '*' > /dev/null
+```
+
+#### 启用cron日志
 
 ```bash
 $ sudo vim /etc/rsyslog.d/50-default.conf
