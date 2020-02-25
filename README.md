@@ -9,6 +9,15 @@ $ git clone git@github.com:jameszhan/dnspod-ddns.git
 $ cd dnspod-ddns/
 ```
 
+#### `Bash`实现
+
+> 本脚本执行依赖于Python2 或 Python3
+
+```bash
+$ cp dnspod_ddns.sh /opt/bin/dnspod_ddns
+$ sudo chmod +x /opt/bin/dnspod_ddns
+```
+
 #### `Ruby`实现
 
 > 本脚本执行依赖于Ruby
