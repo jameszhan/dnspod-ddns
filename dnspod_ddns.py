@@ -27,6 +27,7 @@ def synchorize_myip():
     if dns_record_id > 0:
         myip = get_myip()
         if dns_record_value != myip:
+            print("changed from {0} to {1}".format(dns_record_value, myip))
             r = requests.post('https://dnsapi.cn/Record.Modify', data = {
                 'format': 'json',
                 'record_id': dns_record_id,
@@ -44,9 +45,8 @@ def synchorize_myip():
         print('{0}.{1} not exists or login token is invalid.'.format(dnspod_sub_domain, dnspod_domain))
 
 def get_myip():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(("ns1.dnspod.net", 6666))
-        return s.recv(16).decode('utf-8')
+    rsp = requests.get("http://ipecho.net/plain")
+    return rsp.text
 
 def get_dns_record_id():
     r = requests.post('https://dnsapi.cn/Record.List', data = {
